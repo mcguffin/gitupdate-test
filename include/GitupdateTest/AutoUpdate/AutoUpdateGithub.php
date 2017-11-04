@@ -28,6 +28,7 @@ class AutoUpdateGithub extends AutoUpdate {
 		return false;
 	}
 
+
 	/**
 	 *	@return	string	github-owner/github-repo
 	 */
