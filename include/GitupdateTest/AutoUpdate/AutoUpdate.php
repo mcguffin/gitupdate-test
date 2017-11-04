@@ -11,12 +11,32 @@ abstract class AutoUpdate extends Core\Singleton {
 	 */
 	protected function __construct() {
 
-		add_filter( 'upgrader_pre_download', array( $this, 'upgrader_pre_download' ), 10, 3 );
-
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
+
+		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
 
 	}
 
+	/**
+	 *	Will make sure that the downloaded directory name and our plugins dirname are the same.
+	 *	@filter upgrader_source_selection
+	 */
+	public function source_selection( $source, $remote_source, $wp_upgrader, $hook_extra ) {
+		if ( isset( $hook_extra['plugin'] ) && $hook_extra['plugin'] === plugin_basename( GITUPDATE_TEST_FILE ) ) {
+			// $source: filepath
+			// $remote_source download dir
+			$source_dirname = pathinfo( $source, PATHINFO_FILENAME);
+			$plugin_dirname = pathinfo( $hook_extra['plugin'], PATHINFO_DIRNAME );
+
+			if ( $source_dirname !== $plugin_dirname ) {
+				$new_source = $remote_source . '/' . $plugin_dirname;
+				rename( $source, $new_source );
+				$source = $new_source;
+			}
+
+		}
+		return $source;
+	}
 	/**
 	 *	@action admin_init
 	 */
@@ -26,15 +46,15 @@ abstract class AutoUpdate extends Core\Singleton {
 	}
 
 	/**
+	 *	Preprocess download.
+	 *	Should return false if nothing shall happen
+	 *
 	 *	@filter upgrader_pre_download
 	 */
-	public function upgrader_pre_download( $return, $package, $wp_upgrader ) {
-		if ( false ) { // package is our plugin
-			// $slug = ...;
-
-		}
+	public function preprocess_download( $return, $package, $wp_upgrader ) {
 		return $return;
 	}
+
 	/**
 	 *	@filter	pre_set_site_transient_update_plugins
 	 */
