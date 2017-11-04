@@ -6,7 +6,7 @@ Plugin URI: http://wordpress.org/
 Description: Enter description here.
 Author: Jörn Lund
 Version: 1.0.0
-Author URI: 
+Author URI:
 License: GPL3
 
 Text Domain: gitupdate-test
@@ -50,6 +50,7 @@ Core\Core::instance();
 
 
 if ( is_admin() || defined( 'DOING_AJAX' ) ) {
+	Update\Update::instance();
 
 
 
