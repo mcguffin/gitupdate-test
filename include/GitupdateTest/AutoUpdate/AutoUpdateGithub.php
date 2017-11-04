@@ -16,8 +16,10 @@ class AutoUpdateGithub extends AutoUpdate {
 			$response = wp_remote_get( $release_info_url, array() );
 			if ( ! is_wp_error( $response ) ) {
 				$release_info = json_decode( wp_remote_retrieve_body( $response ) );
+				$id = sprintf( 'github.com/%s', $this->get_github_repo() );
 				$version = preg_replace( '/^([^0-9]+)/ims', '', $release_info->tag_name );
 				return array(
+					'id'			=> $id,
 					'version'		=> $version,
 					'download_url'	=> $release_info->zipball_url
 				);

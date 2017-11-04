@@ -49,14 +49,13 @@ abstract class AutoUpdate extends Core\Singleton {
 			$plugin 		= plugin_basename( GITUPDATE_TEST_FILE );
 			$slug			= basename(GITUPDATE_TEST_DIRECTORY);
 			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
-			$remote_version = $this->format_version_number( $release_info->tag_name );
 
 			if ( version_compare( $release_info['version'], $plugin_info['Version'] , '>' ) ) {
 				$transient->response[ $plugin ] = (object) array(
-					'id'			=> sprintf( 'github.com/%s', $this->get_github_repo() ),
+					'id'			=> $release_info['id'],
 					'slug'			=> $slug,
 					'plugin'		=> $plugin,
-					'new_version'	=> $remote_version,
+					'new_version'	=> $release_info['version'],
 					'url'			=> $plugin_info['PluginURI'],
 					'package'		=> $release_info['download_url'],
 					'icons'			=> array(),
@@ -78,6 +77,7 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	Should return info for current release
 	 *
 	 *	@return array(
+	 *		'id'			=> '...'
 	 *		'version'		=> '...'
 	 *		'download_url'	=> 'https://...'
 	 *	)
