@@ -19,7 +19,7 @@ class Plugin extends Singleton {
 		register_deactivation_hook( GITUPDATE_TEST_FILE, array( __CLASS__ , 'deactivate' ) );
 		register_uninstall_hook( GITUPDATE_TEST_FILE, array( __CLASS__ , 'uninstall' ) );
 
-		add_action( 'plugins_loaded', array( $this, 'maybe_upgrade' ) );
+		add_action( 'admin_init', array( $this, 'maybe_upgrade' ) );
 
 		parent::__construct();
 	}
