@@ -27,7 +27,7 @@ class AutoUpdateGithub extends AutoUpdate {
 						'version'		=> preg_replace( '/^([^0-9]+)/ims', '', $release_info->tag_name ),
 						'download_link'	=> $release_info->zipball_url,
 						'last_updated'	=> $release_info->published_at,
-						'info'			=> $release_info->body,
+						'notes'			=> $release_info->body,
 					);
 			}
 		}
@@ -60,7 +60,7 @@ class AutoUpdateGithub extends AutoUpdate {
 		));
 
 		if ( ! is_wp_error( $response ) ) {
-			$sections['Readme'] = wp_remote_retrieve_body($response);
+			$sections[ __('Description','gitupdate-test') ] = wp_remote_retrieve_body($response);
 		}
 
 
@@ -69,11 +69,11 @@ class AutoUpdateGithub extends AutoUpdate {
 			'headers'	=> array(
 				'Content-Type' => 'text/plain',
 			),
-			'body' => $release_info['info'],
+			'body' => $release_info['notes'],
 		));
 
 		if ( ! is_wp_error( $response ) ) {
-			$sections['Release Info'] = wp_remote_retrieve_body($response);
+			$sections[ __('Notes','gitupdate-test') ] = wp_remote_retrieve_body( $response );
 		}
 
 		return $sections;
