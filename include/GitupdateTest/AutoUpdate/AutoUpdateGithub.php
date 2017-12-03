@@ -11,23 +11,80 @@ class AutoUpdateGithub extends AutoUpdate {
 	/**
 	 *	@inheritdoc
 	 */
-	public function get_release_info() {
+	public function get_remote_release_info() {
 		if ( $release_info_url = $this->get_release_info_url() ) {
 			$response = wp_remote_get( $release_info_url, array() );
 			if ( ! is_wp_error( $response ) ) {
 				$release_info = json_decode( wp_remote_retrieve_body( $response ) );
-				$id = sprintf( 'github.com/%s', $this->get_github_repo() );
-				$version = preg_replace( '/^([^0-9]+)/ims', '', $release_info->tag_name );
-				return array(
-					'id'			=> $id,
-					'version'		=> $version,
-					'download_url'	=> $release_info->zipball_url
-				);
+
+				return $this->extract_info( $release_info->body, array(
+						'tested'		=> 'Tested up to',
+						'requires_php'	=> 'Requires PHP',
+						'requires'		=> 'Requires at least'
+					) ) + array(
+						'id'			=> sprintf( 'github.com/%s', $this->get_github_repo() ),
+						'version_tag'	=> $release_info->tag_name,
+						'version'		=> preg_replace( '/^([^0-9]+)/ims', '', $release_info->tag_name ),
+						'download_link'	=> $release_info->zipball_url,
+						'last_updated'	=> $release_info->published_at,
+						'info'			=> $release_info->body,
+					);
 			}
 		}
+
 		return false;
 	}
 
+	/**
+	 *	@inheritdoc
+	 */
+	protected function get_plugin_sections() {
+		$repo = $this->get_github_repo();
+
+		$sections = array();
+
+		$release_info = $this->get_release_info();
+
+		// get plain github readme
+		$readme_url = sprintf('https://raw.githubusercontent.com/%s/%s/README.md', $repo, $release_info['version_tag'] );
+
+		$response = wp_remote_get( $readme_url );
+		$readme = wp_remote_retrieve_body($response);
+
+		// parse readme github mardown
+		$response = wp_remote_post('https://api.github.com/markdown/raw', array(
+			'headers'	=> array(
+				'Content-Type' => 'text/plain',
+			),
+			'body' => $readme,
+		));
+
+		if ( ! is_wp_error( $response ) ) {
+			$sections['Readme'] = wp_remote_retrieve_body($response);
+		}
+
+
+		// parse release info github mardown
+		$response = wp_remote_post('https://api.github.com/markdown/raw', array(
+			'headers'	=> array(
+				'Content-Type' => 'text/plain',
+			),
+			'body' => $release_info['info'],
+		));
+
+		if ( ! is_wp_error( $response ) ) {
+			$sections['Release Info'] = wp_remote_retrieve_body($response);
+		}
+
+		return $sections;
+	}
+
+	/**
+	 *	@inheritdoc
+	 */
+	protected function get_plugin_banners() {
+		return array();
+	}
 
 	/**
 	 *	@return	string	github-owner/github-repo
