@@ -27,21 +27,6 @@ abstract class AutoUpdate extends Core\Singleton {
 	public function plugins_api( $res, $action, $args ) {
 		$slug = basename(GITUPDATE_TEST_DIRECTORY);
 		if ( $_REQUEST['plugin'] === $slug ) {
-			/*
-
-			'Name'        => 'Plugin Name',
-			'PluginURI'   => 'Plugin URI',
-			'Version'     => 'Version',
-			'Description' => 'Description',
-			'Author'      => 'Author',
-			'AuthorURI'   => 'Author URI',
-			'TextDomain'  => 'Text Domain',
-			'DomainPath'  => 'Domain Path',
-			'Network'     => 'Network',
-
-
-			*/
-
 
 			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
 			$release_info	= $this->get_release_info();
