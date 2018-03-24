@@ -18,7 +18,7 @@ abstract class AutoUpdate extends Core\Singleton {
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
 
-//		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
+		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
 		add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3 );
 	}
 
@@ -76,11 +76,20 @@ abstract class AutoUpdate extends Core\Singleton {
 			// $remote_source download dir
 			$source_dirname = pathinfo( $source, PATHINFO_FILENAME);
 			$plugin_dirname = pathinfo( $hook_extra['plugin'], PATHINFO_DIRNAME );
-
+error_log('SOURCES');
+error_log($source); // tmp/plugin-slug-XXXXX
+error_log($remote_source);
+error_log($source_dirname);
+error_log($plugin_dirname);
+error_log($hook_extra['plugin']);
 			if ( $source_dirname !== $plugin_dirname ) {
 				$new_source = $remote_source . '/' . $plugin_dirname;
-				rename( $source, $new_source );
-				$source = $new_source;
+				if ( strpos( $new_source, $source ) !== false ) {
+
+				}
+				if ( rename( $source, $new_source ) ) {
+					$source = $new_source;
+				}
 			}
 
 		}
