@@ -76,17 +76,10 @@ abstract class AutoUpdate extends Core\Singleton {
 			// $remote_source download dir
 			$source_dirname = pathinfo( $source, PATHINFO_FILENAME);
 			$plugin_dirname = pathinfo( $hook_extra['plugin'], PATHINFO_DIRNAME );
-error_log('SOURCES');
-error_log($source); // tmp/plugin-slug-XXXXX
-error_log($remote_source);
-error_log($source_dirname);
-error_log($plugin_dirname);
-error_log($hook_extra['plugin']);
 			if ( $source_dirname !== $plugin_dirname ) {
-				$new_source = $remote_source . '/' . $plugin_dirname;
-				if ( strpos( $new_source, $source ) !== false ) {
 
-				}
+				$new_source = pathinfo( $remote_source, PATHINFO_DIRNAME )  . '/' . $plugin_dirname;
+
 				if ( rename( $source, $new_source ) ) {
 					$source = $new_source;
 				}
