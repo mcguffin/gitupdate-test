@@ -27,12 +27,12 @@ abstract class AutoUpdate extends Core\Singleton {
 	 */
 	public function plugins_api( $res, $action, $args ) {
 		$slug = basename(GITUPDATE_TEST_DIRECTORY);
-error_log($slug);
+
 		if ( $_REQUEST['plugin'] === $slug ) {
 
 			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
 			$release_info	= $this->get_release_info();
-error_log(var_export($release_info,true));
+
 			$plugin_api = array(
 				'name'						=> $plugin_info['Name'],
 				'slug'						=> $slug,
@@ -112,8 +112,6 @@ error_log(var_export($release_info,true));
 		if ( ! is_object( $transient ) || ! isset( $transient->response ) ) {
 			return $transient;
 		}
-error_log('CHECK!');
-error_log(var_export($this->get_release_info(),true));
 
 		// get own version
 		if ( $release_info = $this->get_release_info() ) {
@@ -121,19 +119,19 @@ error_log(var_export($this->get_release_info(),true));
 			$slug			= basename(GITUPDATE_TEST_DIRECTORY);
 			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
 
-			if ( version_compare( $release_info['version'], $plugin_info['Version'] , '>' ) ) {
+			if ( version_compare( $release_info->version, $plugin_info['Version'] , '>' ) ) {
 
 				$transient->response[ $plugin ] = (object) array(
-					'id'			=> $release_info['id'],
+					'id'			=> $release_info->id,
 					'slug'			=> $slug,
 					'plugin'		=> $plugin,
-					'new_version'	=> $release_info['version'],
+					'new_version'	=> $release_info->version,
 					'url'			=> $plugin_info['PluginURI'],
-					'package'		=> $release_info['download_link'],
+					'package'		=> $release_info->download_link,
 					'icons'			=> array(),
 					'banners'		=> array(),
 					'banners_rtl'	=> array(),
-					'tested'		=> $release_info['tested'],
+					'tested'		=> $release_info->tested,
 					'compatibility'	=> (object) array(),
 				);
 				if ( isset( $transient->no_update ) && isset( $transient->no_update[$plugin] ) ) {
