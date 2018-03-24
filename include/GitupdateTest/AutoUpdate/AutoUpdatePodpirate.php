@@ -6,12 +6,34 @@ use GitupdateTest\Core;
 
 class AutoUpdatePodpirate extends AutoUpdate {
 
-	private $info_url = 'https://download.podpirate.org/info/%s/releaase.json?token=%s';
+	private $info_url = 'https://download.podpirate.org/info/%s/%s/releaase.json';
+
+
+	/**
+	 *	@var string plugin | theme
+	 */
+	protected $type = null;
+
+	/**
+	 *	@var string plugins | themes
+	 */
+	protected $dl_prefix = null;
+
+	/**
+	 *	@param string $type plugin | theme
+	 */
+	public function set_type( $type ) {
+		$this->type = $type;
+		$this->dl_prefix = $type . 's';
+	}
 
 	/**
 	 *	@inheritdoc
 	 */
 	public function get_remote_release_info() {
+		error_log('REMOTE CHECK');
+		error_log(var_export($this->get_release_info_url(),true));
+
 		if ( $release_info_url = $this->get_release_info_url() ) {
 
 			$response = wp_remote_get( $release_info_url, array() );
@@ -19,9 +41,15 @@ class AutoUpdatePodpirate extends AutoUpdate {
 
 			if ( ! is_wp_error( $response ) ) {
 				$release_info = json_decode( wp_remote_retrieve_body( $response ) );
-				$release_info['download_link'] = add_query_arg('token',$this->get_access_token(),$release_info['download_link']);
+				$release_info->download_link = add_query_arg(array(
+					'token' => $this->get_access_token(),
+					'domain'	=> preg_replace( '/https?:\/\/([a-z0-9.-])\/?/','\1',get_option('home')),
+				), $release_info->download_link );
+				error_log(var_export($release_info->download_link,true));
 
 				return $release_info;
+			} else {
+				error_log($response->get_error_message());
 			}
 		}
 
@@ -64,7 +92,7 @@ class AutoUpdatePodpirate extends AutoUpdate {
 
 		if ( $token = $this->get_access_token() ) {
 			$slug = basename( GITUPDATE_TEST_DIRECTORY );
-			return sprintf( $this->info_url, $slug, $token );
+			return sprintf( $this->info_url, $this->dl_prefix, $slug );
 		}
 		return false;
 	}

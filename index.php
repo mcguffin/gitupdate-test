@@ -51,8 +51,7 @@ Core\Core::instance();
 
 
 if ( is_admin() || defined( 'DOING_AJAX' ) ) {
-	AutoUpdate\AutoUpdatePodpirate::instance();
 
-
+	AutoUpdate\AutoUpdatePodpirate::instance()->set_type('plugin');
 
 }

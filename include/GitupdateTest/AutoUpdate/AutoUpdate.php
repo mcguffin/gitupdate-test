@@ -21,16 +21,18 @@ abstract class AutoUpdate extends Core\Singleton {
 		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
 		add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3 );
 	}
+
 	/**
 	 *	@filter plugin_api
 	 */
 	public function plugins_api( $res, $action, $args ) {
 		$slug = basename(GITUPDATE_TEST_DIRECTORY);
+error_log($slug);
 		if ( $_REQUEST['plugin'] === $slug ) {
 
 			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
 			$release_info	= $this->get_release_info();
-
+error_log(var_export($release_info,true));
 			$plugin_api = array(
 				'name'						=> $plugin_info['Name'],
 				'slug'						=> $slug,
@@ -110,6 +112,8 @@ abstract class AutoUpdate extends Core\Singleton {
 		if ( ! is_object( $transient ) || ! isset( $transient->response ) ) {
 			return $transient;
 		}
+error_log('CHECK!');
+error_log(var_export($this->get_release_info(),true));
 
 		// get own version
 		if ( $release_info = $this->get_release_info() ) {
@@ -151,7 +155,8 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	)
 	 */
 	protected function get_release_info() {
-
+error_log('IS_NULL');
+error_log(var_export(is_null( $this->release_info ),true));
 		if ( is_null( $this->release_info ) ) {
 			$this->release_info = $this->get_remote_release_info();
 		}

@@ -49,14 +49,10 @@ class Plugin extends Singleton {
 	 */
 	public static function activate() {
 
-
-		update_site_option( '_version', $new_version );
-
 		foreach ( self::$components as $component ) {
 			$comp = $component::instance();
 			$comp->activate();
 		}
-
 
 	}
 
