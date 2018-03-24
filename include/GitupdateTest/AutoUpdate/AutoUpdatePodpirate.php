@@ -6,7 +6,7 @@ use GitupdateTest\Core;
 
 class AutoUpdatePodpirate extends AutoUpdate {
 
-	private $info_url = 'https://download.podpirate.org/info/%s/%s/releaase.json';
+	private $info_url = 'https://download.podpirate.org/info/%s/%s/release.json';
 
 
 	/**
