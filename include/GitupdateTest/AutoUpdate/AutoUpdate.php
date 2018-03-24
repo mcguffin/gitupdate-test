@@ -18,7 +18,7 @@ abstract class AutoUpdate extends Core\Singleton {
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
 
-		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
+//		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
 		add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3 );
 	}
 
@@ -153,8 +153,7 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	)
 	 */
 	protected function get_release_info() {
-error_log('IS_NULL');
-error_log(var_export(is_null( $this->release_info ),true));
+
 		if ( is_null( $this->release_info ) ) {
 			$this->release_info = $this->get_remote_release_info();
 		}
