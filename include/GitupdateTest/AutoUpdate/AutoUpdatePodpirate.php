@@ -6,7 +6,7 @@ use GitupdateTest\Core;
 
 class AutoUpdatePodpirate extends AutoUpdate {
 
-	private $info_url = 'https://dl.podpirate.org/dl/%s/releaase.json?token=%s';
+	private $info_url = 'https://download.podpirate.org/info/%s/releaase.json?token=%s';
 
 	/**
 	 *	@inheritdoc
@@ -48,11 +48,11 @@ class AutoUpdatePodpirate extends AutoUpdate {
 	 *	@return	string	access token
 	 */
 	private function get_access_token() {
-		if ( defined( 'PODPIRATE_ACCESS_TOKEN' ) ) {
-			return PODPIRATE_ACCESS_TOKEN;
-		}
 		if ( $token = get_option('podpirate_access_token') ) {
 			return $token;
+		}
+		if ( defined( 'PODPIRATE_ACCESS_TOKEN' ) ) {
+			return PODPIRATE_ACCESS_TOKEN;
 		}
 		return apply_filters( 'podpirate_access_token', '' );
 	}
