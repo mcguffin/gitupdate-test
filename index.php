@@ -5,7 +5,7 @@ Plugin Name: GitUpdate Test
 Plugin URI: https://github.com/mcguffin/gitupdate-test
 Description: Enter description here.
 Author: Jörn Lund
-Version: 1.1.30
+Version: 1.1.29
 Author URI: https://github.com/mcguffin
 License: GPL3
 Github Repository: mcguffin/gitupdate-test
@@ -51,7 +51,9 @@ Core\Core::instance();
 
 
 if ( is_admin() || defined( 'DOING_AJAX' ) ) {
-
-	AutoUpdate\AutoUpdatePodpirate::instance()->set_type('plugin');
-
+	/*
+	AutoUpdate\AutoUpdatePodpirate::instance()->set_type('plugin')->init( __FILE__ );
+	/*/
+	AutoUpdate\AutoUpdateGithub::instance()->init( __FILE__ );
+	//*/
 }

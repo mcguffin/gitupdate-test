@@ -12,9 +12,22 @@ abstract class AutoUpdate extends Core\Singleton {
 	protected $release_info = null;
 
 	/**
-	 *	@inheritdoc
+	 *	@var string absolute path to plugin file
 	 */
-	protected function __construct() {
+	protected $file = null;
+
+	/**
+	 *	@var string absolute path to plugin directory
+	 */
+	protected $directory = null;
+
+	/**
+	 *	@param string $plugin_file absolute path to plugin file
+	 */
+	public function init( $plugin_file ) {
+
+		$this->file = $plugin_file;
+		$this->directory = plugin_dir_path( $plugin_file );
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
 
@@ -26,11 +39,11 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	@filter plugin_api
 	 */
 	public function plugins_api( $res, $action, $args ) {
-		$slug = basename(GITUPDATE_TEST_DIRECTORY);
+		$slug = basename($this->directory);
 
 		if ( $_REQUEST['plugin'] === $slug ) {
 
-			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
+			$plugin_info	= get_plugin_data( $this->file );
 			$release_info	= $this->get_release_info();
 
 			$plugin_api = array(
@@ -60,7 +73,7 @@ abstract class AutoUpdate extends Core\Singleton {
 //				'donate_link'				=> '',
 				'banners'					=> $this->get_plugin_banners(),
 				'external'					=> true,
-			) + $release_info;
+			) + (array) $release_info;
 
 			return (object) $plugin_api;
 		}
@@ -71,7 +84,7 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	@filter upgrader_source_selection
 	 */
 	public function source_selection( $source, $remote_source, $wp_upgrader, $hook_extra ) {
-		if ( isset( $hook_extra['plugin'] ) && $hook_extra['plugin'] === plugin_basename( GITUPDATE_TEST_FILE ) ) {
+		if ( isset( $hook_extra['plugin'] ) && $hook_extra['plugin'] === plugin_basename( $this->file ) ) {
 			// $source: filepath
 			// $remote_source download dir
 			$source_dirname = pathinfo( $source, PATHINFO_FILENAME);
@@ -117,9 +130,9 @@ abstract class AutoUpdate extends Core\Singleton {
 
 		// get own version
 		if ( $release_info = $this->get_release_info() ) {
-			$plugin 		= plugin_basename( GITUPDATE_TEST_FILE );
-			$slug			= basename(GITUPDATE_TEST_DIRECTORY);
-			$plugin_info	= get_plugin_data( GITUPDATE_TEST_FILE );
+			$plugin 		= plugin_basename( $this->file );
+			$slug			= basename($this->directory);
+			$plugin_info	= get_plugin_data( $this->file );
 
 			if ( version_compare( $release_info->version, $plugin_info['Version'] , '>' ) ) {
 
@@ -160,7 +173,7 @@ abstract class AutoUpdate extends Core\Singleton {
 			$this->release_info = $this->get_remote_release_info();
 		}
 
-		return $this->release_info;
+		return (object) $this->release_info;
 	}
 
 	/**

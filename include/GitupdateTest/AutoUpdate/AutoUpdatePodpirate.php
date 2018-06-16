@@ -37,7 +37,7 @@ class AutoUpdatePodpirate extends AutoUpdate {
 		if ( $release_info_url = $this->get_release_info_url() ) {
 
 			$response = wp_remote_get( $release_info_url, array() );
-			$slug = basename( GITUPDATE_TEST_DIRECTORY );
+			$slug = basename( $this->directory );
 
 			if ( ! is_wp_error( $response ) ) {
 				$release_info = json_decode( wp_remote_retrieve_body( $response ) );
@@ -91,7 +91,7 @@ class AutoUpdatePodpirate extends AutoUpdate {
 	private function get_release_info_url() {
 
 		if ( $token = $this->get_access_token() ) {
-			$slug = basename( GITUPDATE_TEST_DIRECTORY );
+			$slug = basename( $this->directory );
 			return sprintf( $this->info_url, $this->dl_prefix, $slug );
 		}
 		return false;

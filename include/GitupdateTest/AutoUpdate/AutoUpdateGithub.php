@@ -45,8 +45,32 @@ class AutoUpdateGithub extends AutoUpdate {
 
 		$release_info = $this->get_release_info();
 
+		$repoinfo_url = sprintf('https://api.github.com/repos/%s', $repo );
+		$response = wp_remote_get( $repoinfo_url );
+		$urls_section = '';
+		if ( ! is_wp_error( $response ) ) {
+			$urls = array();
+			$repoinfo = json_decode( wp_remote_retrieve_body($response) );
+			$base_url = $repoinfo->html_url;
+
+			$urls[ __( 'Releases', 'gitupdate-test' ) ] = sprintf( '%s/releases', $base_url );
+			if ( $repoinfo->has_wiki ) {
+				$urls[ __( 'Wiki', 'gitupdate-test' ) ] = sprintf( '%s/wiki', $base_url );
+			}
+			if ( $repoinfo->has_issues ) {
+				$urls[ __( 'Issues', 'gitupdate-test' ) ] = sprintf( '%s/issues', $base_url );
+			}
+			if ( $repoinfo->license ) {
+				$urls[ $repoinfo->license->name ] = $repoinfo->license->url;
+			}
+			foreach ( $urls as $label => $url ) {
+				$urls_section .= sprintf( '<li><a href="%s">%s</a></li>', $url, $label );
+			}
+			$urls_section = sprintf( '<ul>%s</ul>', $urls_section );
+		}
+
 		// get plain github readme
-		$readme_url = sprintf('https://raw.githubusercontent.com/%s/%s/README.md', $repo, $release_info['version_tag'] );
+		$readme_url = sprintf('https://raw.githubusercontent.com/%s/%s/README.md', $repo, $release_info->version_tag );
 
 		$response = wp_remote_get( $readme_url );
 		$readme = wp_remote_retrieve_body($response);
@@ -63,13 +87,16 @@ class AutoUpdateGithub extends AutoUpdate {
 			$sections[ __('Description','gitupdate-test') ] = wp_remote_retrieve_body($response);
 		}
 
+		if ( ! empty( $urls_section ) ) {
+			$sections[ __( 'Links', 'gitupdate-test' ) ] = $urls_section;
+		}
 
 		// parse release info github mardown
 		$response = wp_remote_post('https://api.github.com/markdown/raw', array(
 			'headers'	=> array(
 				'Content-Type' => 'text/plain',
 			),
-			'body' => $release_info['notes'],
+			'body' => $release_info->notes,
 		));
 
 		if ( ! is_wp_error( $response ) ) {
@@ -92,7 +119,7 @@ class AutoUpdateGithub extends AutoUpdate {
 	private function get_github_repo() {
 		if ( is_null( $this->github_repo ) ) {
 			$this->github_repo = false;
-			$data = get_file_data( GITUPDATE_TEST_FILE, array('GithubRepo'=>'Github Repository') );
+			$data = get_file_data( $this->file, array('GithubRepo'=>'Github Repository') );
 			if ( ! empty( $data['GithubRepo'] ) ) {
 				$this->github_repo = $data['GithubRepo'];
 			}
