@@ -5,7 +5,7 @@ Plugin Name: GitUpdate Test
 Plugin URI: https://github.com/mcguffin/gitupdate-test
 Description: Enter description here.
 Author: Jörn Lund
-Version: 1.1.34
+Version: 1.1.35
 Author URI: https://github.com/mcguffin
 License: GPL3
 Github Repository: mcguffin/gitupdate-test
@@ -50,11 +50,20 @@ Core\Core::instance();
 
 
 
-
 if ( is_admin() || defined( 'DOING_AJAX' ) ) {
 
-	if ( ! file_exists( GITUPDATE_TEST_DIRECTORY . '/.git/' ) && ! is_plugin_active( 'github-updater/github-updater.php' ) ) {
-		AutoUpdate\AutoUpdateGithub::instance()->init( __FILE__ );
+	if ( ! file_exists( GITUPDATE_TEST_DIRECTORY . '/.git/' ) ) {
+
+		// not a git. Check if https://github.com/afragen/github-updater is active
+		$active_plugins = get_option('active_plugins');
+		if ( $sitewide_plugins = get_site_option('active_sitewide_plugins') ) {
+			$active_plugins = array_merge( $active_plugins, array_keys( $sitewide_plugins ) );
+		}
+
+		if ( ! in_array( 'github-updater/github-updater.php', $active_plugins ) ) {
+			// not github updater. Init our our own...
+			AutoUpdate\AutoUpdateGithub::instance()->init( __FILE__ );
+		}
 	}
 
 }
