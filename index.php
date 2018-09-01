@@ -9,7 +9,8 @@ Version: 1.1.32
 Author URI: https://github.com/mcguffin
 License: GPL3
 Github Repository: mcguffin/gitupdate-test
-
+GitHub Plugin URI: mcguffin/gitupdate-test
+Release Asset: true
 Text Domain: gitupdate-test
 Domain Path: /languages/
 */
