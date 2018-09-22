@@ -59,6 +59,13 @@ class Plugin extends Singleton {
 	}
 
 	/**
+	 *	@return string plugin slug
+	 */
+	public function get_slug() {
+		return basename( $this->get_plugin_dir() );
+	}
+
+	/**
 	 *	@return string full plugin file path
 	 */
 	public function get_plugin_dir() {
