@@ -1,11 +1,21 @@
 <?php
+/**
+ *	@package GitupdateTest\Compat
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 
 namespace GitupdateTest\Compat;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
+
 
 use GitupdateTest\Core;
 
 
-class Sample extends Core\PluginComponent {
+class WPMU extends Core\PluginComponent {
 
 	protected function __construct() {
 	}
@@ -14,7 +24,7 @@ class Sample extends Core\PluginComponent {
 	 *	@inheritdoc
 	 */
 	 public function activate(){
-		 
+
 	 }
 
 	 /**

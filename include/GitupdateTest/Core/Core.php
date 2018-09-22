@@ -2,6 +2,8 @@
 
 namespace GitupdateTest\Core;
 
+use GitupdateTest\Compat;
+
 class Core extends Plugin {
 
 	/**
@@ -15,7 +17,11 @@ class Core extends Plugin {
 
 		$args = func_get_args();
 		parent::__construct( ...$args );
+
+		add_filter('is_plugin_active_' . $this->get_slug(), '__return_true' );
+
 	}
+
 
 	/**
 	 *	Load frontend styles and scripts
@@ -25,16 +31,24 @@ class Core extends Plugin {
 	public function wp_enqueue_style() {
 	}
 
-	/**
-	 *	Load Compatibility classes
-	 *
-	 *  @action plugins_loaded
-	 */
-	public function init_compat() {
-		// if ( class_exists( 'Polylang' ) ) {
-		// 	Compat\Polylang::instance();
-		// }
-	}
+	 /**
+ 	 *	Load Compatibility classes
+ 	 *
+ 	 *  @action plugins_loaded
+ 	 */
+ 	public function init_compat() {
+
+ 		if ( is_multisite() && is_plugin_active_for_network( $this->get_wp_plugin() ) ) {
+ 			Compat\WPMU::instance();
+ 		}
+ 		if ( function_exists('\acf') && version_compare( acf()->version,'5.0.0','>=') ) {
+ 			Compat\ACF::instance();
+ 		}
+ 		if ( defined('POLYLANG_VERSION') && version_compare( POLYLANG_VERSION, '1.0.0', '>=' ) ) {
+ 			Compat\Polylang::instance();
+ 		}
+ 	}
+
 
 
 	/**

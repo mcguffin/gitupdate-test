@@ -36,29 +36,43 @@ class Plugin extends Singleton {
 	/**
 	 *	@return string full plugin file path
 	 */
-	public function get_plugin_file() {
+	final public function get_plugin_file() {
 		return $this->plugin_file;
+	}
+
+	/**
+	 *	@return string Path to the main plugin file from plugins directory
+	 */
+	final public function get_wp_plugin() {
+		return str_replace( trailingslashit( WP_PLUGIN_DIR ), '', $this->plugin_file );
 	}
 
 	/**
 	 *	@return string full plugin file path
 	 */
-	public function get_plugin_dir() {
+	final public function get_plugin_dir() {
  		return plugin_dir_path( $this->get_plugin_file() );
  	}
 
 	/**
 	 *	@return string current plugin version
 	 */
-	public function get_version() {
+	final public function get_version() {
 		return $this->get_plugin_meta( 'Version' );
+	}
+
+	/**
+	 *	@return string current plugin version
+	 */
+	final public function get_slug() {
+		return basename( $this->get_plugin_dir() );
 	}
 
 	/**
 	 *	@param string $which Which plugin meta to get. NUll
 	 *	@return string|array plugin meta
 	 */
-	public function get_plugin_meta( $which = null ) {
+	final public function get_plugin_meta( $which = null ) {
 		if ( ! isset( $this->plugin_meta ) ) {
 			$this->plugin_meta = get_plugin_data( $this->plugin_file() );
 		}

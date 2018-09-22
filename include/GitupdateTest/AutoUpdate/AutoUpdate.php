@@ -12,26 +12,41 @@ abstract class AutoUpdate extends Core\Singleton {
 	protected $release_info = null;
 
 	/**
-	 *	@var string absolute path to plugin file
+	 *	@var Core\Core plugin core instance
 	 */
-	protected $file = null;
-
-	/**
-	 *	@var string absolute path to plugin directory
-	 */
-	protected $directory = null;
+	protected $core = null;
 
 	/**
 	 *	@inheritdoc
 	 */
 	protected function __construct() {
 		$this->core = Core\Core::instance();
-		$this->slug = basename( $this->core->get_plugin_dir() );
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
+		add_filter( 'site_transient_update_plugins', array( $this, 'check_site_transient' ), 10, 2 );
 
 		add_filter( 'upgrader_source_selection', array( $this, 'source_selection' ), 10, 4 );
 		add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3 );
+	}
+
+	/**
+	 *	Prevent WP.org updates of plugins with the same slug.
+	 *
+	 *	@filter site_transient_update_plugins
+	 */
+	public function check_site_transient( $value, $transient ) {
+		$plugin = plugin_basename( $this->file );
+
+		if ( ! is_object( $value ) || ! isset( $value->response ) || ! isset( $value->response[ plugin_basename( $this->file ) ] ) ) {
+			return $value;
+		}
+
+		$plugin_info	= get_plugin_data( $this->file );
+
+		if ( $value->response[ $plugin ]->slug === $this->core->get_slug() && $value->response[ $plugin ]->url !== $plugin_info['PluginURI'] ) {
+			unset( $value->response[$plugin] );
+		}
+		return $value;
 	}
 
 	/**
@@ -39,14 +54,14 @@ abstract class AutoUpdate extends Core\Singleton {
 	 */
 	public function plugins_api( $res, $action, $args ) {
 
-		if ( $_REQUEST['plugin'] === $this->slug ) {
+		if ( $_REQUEST['plugin'] === $this->core->get_slug() ) {
 
 			$plugin_info	= $this->core->get_plugin_meta();
 			$release_info	= $this->get_release_info();
 
 			$plugin_api = array(
 				'name'						=> $plugin_info['Name'],
-				'slug'						=> $this->slug,
+				'slug'						=> $this->core->get_slug(),
 //				'version'					=> $release_info, // release
 				'author'					=> $plugin_info['Author'],
 				'author_profile'			=> $plugin_info['AuthorURI'],
@@ -135,7 +150,7 @@ abstract class AutoUpdate extends Core\Singleton {
 
 				$transient->response[ $plugin ] = (object) array(
 					'id'			=> $release_info->id,
-					'slug'			=> $this->slug,
+					'slug'			=> $this->core->get_slug(),
 					'plugin'		=> $plugin,
 					'new_version'	=> $release_info->version,
 					'url'			=> $plugin_info['PluginURI'],
