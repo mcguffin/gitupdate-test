@@ -36,7 +36,7 @@ class Plugin extends Singleton {
 
 		register_activation_hook( $this->get_plugin_file(), array( $this , 'activate' ) );
 		register_deactivation_hook( $this->get_plugin_file(), array( $this , 'deactivate' ) );
-		register_uninstall_hook( $this->get_plugin_file(), array( $this , 'uninstall' ) );
+		register_uninstall_hook( $this->get_plugin_file(), array( __CLASS__, 'uninstall' ) );
 
 		add_action( 'admin_init', array( $this, 'maybe_upgrade' ) );
 		add_filter( 'extra_plugin_headers', array( $this, 'add_plugin_header' ) );
