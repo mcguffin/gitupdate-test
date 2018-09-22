@@ -130,7 +130,6 @@ class AutoUpdateGithub extends AutoUpdate {
 			if ( $repo = $this->core->get_plugin_meta( 'Github Repository' ) ) {
 				$this->github_repo = $repo;
 			}
-			vaR_dump($this->github_repo);exit();
 		}
 		return $this->github_repo;
 
