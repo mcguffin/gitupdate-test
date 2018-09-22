@@ -58,7 +58,7 @@ if ( is_admin() || defined( 'DOING_AJAX' ) ) {
 
 		if ( ! in_array( 'github-updater/github-updater.php', $active_plugins ) ) {
 			// not github updater. Init our our own...
-			AutoUpdate\AutoUpdateGithub::instance()->init( __FILE__ );
+			AutoUpdate\AutoUpdateGithub::instance();
 		}
 	}
 

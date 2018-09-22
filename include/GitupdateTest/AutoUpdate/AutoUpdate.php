@@ -22,9 +22,9 @@ abstract class AutoUpdate extends Core\Singleton {
 	protected $directory = null;
 
 	/**
-	 *	@param string $plugin_file absolute path to plugin file
+	 *	@inheritdoc
 	 */
-	public function init( $plugin_file ) {
+	protected function __construct() {
 		$this->core = Core\Core::instance();
 		$this->slug = basename( $this->core->get_plugin_dir() );
 
@@ -41,7 +41,7 @@ abstract class AutoUpdate extends Core\Singleton {
 
 		if ( $_REQUEST['plugin'] === $this->slug ) {
 
-			$plugin_info	= get_plugin_data( $this->core->get_plugin_file() );
+			$plugin_info	= $this->core->get_plugin_meta();
 			$release_info	= $this->get_release_info();
 
 			$plugin_api = array(
