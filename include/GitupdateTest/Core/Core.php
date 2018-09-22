@@ -13,7 +13,8 @@ class Core extends Plugin {
 		add_action( 'init' , array( $this , 'init' ) );
 		add_action( 'wp_enqueue_scripts' , array( $this , 'wp_enqueue_style' ) );
 
-		parent::__construct();
+		$args = func_get_args();
+		parent::__construct( ...$args );
 	}
 
 	/**
@@ -42,7 +43,7 @@ class Core extends Plugin {
 	 *  @action plugins_loaded
 	 */
 	public function load_textdomain() {
-		$path = pathinfo( dirname( GITUPDATE_TEST_FILE ), PATHINFO_FILENAME );
+		$path = pathinfo( $this->get_plugin_file(), PATHINFO_FILENAME );
 		load_plugin_textdomain( 'gitupdate-test' , false, $path . '/languages' );
 	}
 
@@ -61,7 +62,7 @@ class Core extends Plugin {
 	 *	@return wp_enqueue_editor
 	 */
 	public function get_asset_url( $asset ) {
-		return plugins_url( $asset, GITUPDATE_TEST_FILE );
+		return plugins_url( $asset, $this->get_plugin_file() );
 	}
 
 

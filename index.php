@@ -10,7 +10,6 @@ Author URI: https://github.com/mcguffin
 License: GPL3
 Github Repository: mcguffin/gitupdate-test
 GitHub Plugin URI: mcguffin/gitupdate-test
-Release Asset: true
 Text Domain: gitupdate-test
 Domain Path: /languages/
 */
@@ -40,21 +39,18 @@ Command line args were: `"GitUpdate Test" git`
 
 namespace GitupdateTest;
 
-define( 'GITUPDATE_TEST_FILE', __FILE__ );
-define( 'GITUPDATE_TEST_DIRECTORY', plugin_dir_path(__FILE__) );
+require_once plugin_dir_path(__FILE__) . 'include/autoload.php';
 
-require_once GITUPDATE_TEST_DIRECTORY . 'include/autoload.php';
-
-Core\Core::instance();
+$core = Core\Core::instance( __FILE__ );
 
 
 
 
 if ( is_admin() || defined( 'DOING_AJAX' ) ) {
 
-	if ( ! file_exists( GITUPDATE_TEST_DIRECTORY . '/.git/' ) ) {
+	if ( ! file_exists( plugin_dir_path(__FILE__) . '/.git/' ) ) {
 
-		// not a git. Check if https://github.com/afragen/github-updater is active
+		// not a git. Check if https://github.com/afragen/github-updater is active. (function is_plugin_active not available yet)
 		$active_plugins = get_option('active_plugins');
 		if ( $sitewide_plugins = get_site_option('active_sitewide_plugins') ) {
 			$active_plugins = array_merge( $active_plugins, array_keys( $sitewide_plugins ) );

@@ -7,21 +7,54 @@ use GitupdateTest\Compat;
 
 class Plugin extends Singleton {
 
+	/** @var string plugin main file */
+	private $plugin_file;
+
+	/** @var array metadata from plugin file */
+	private $plugin_meta;
+
+	/** @var string plugin components which might need upgrade */
 	private static $components = array(
 	);
 
 	/**
 	 *	Private constructor
 	 */
-	protected function __construct() {
+	protected function __construct( $file ) {
 
-		register_activation_hook( GITUPDATE_TEST_FILE, array( __CLASS__ , 'activate' ) );
-		register_deactivation_hook( GITUPDATE_TEST_FILE, array( __CLASS__ , 'deactivate' ) );
-		register_uninstall_hook( GITUPDATE_TEST_FILE, array( __CLASS__ , 'uninstall' ) );
+		$this->plugin_file = $file;
+
+		register_activation_hook( $this->get_plugin_file(), array( __CLASS__ , 'activate' ) );
+		register_deactivation_hook( $this->get_plugin_file(), array( __CLASS__ , 'deactivate' ) );
+		register_uninstall_hook( $this->get_plugin_file(), array( __CLASS__ , 'uninstall' ) );
 
 		add_action( 'wp_upgrade', array( $this, 'maybe_upgrade' ) );
 
 		parent::__construct();
+	}
+
+	/**
+	 *	@return string full plugin file path
+	 */
+	public function get_plugin_file() {
+		return $this->plugin_file;
+	}
+
+	/**
+	 *	@return string full plugin file path
+	 */
+	public function get_plugin_dir() {
+		return plugin_dir_path( $this->plugin_file );
+	}
+
+	/**
+	 *	@return string current plugin version
+	 */
+	public function get_version() {
+		if ( ! isset( $this->plugin_meta ) ) {
+			$this->plugin_meta = get_plugin_data( $this->plugin_file() );
+		}
+		return $this->plugin_meta['Version'];
 	}
 
 	/**
