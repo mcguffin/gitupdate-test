@@ -35,13 +35,13 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	@filter site_transient_update_plugins
 	 */
 	public function check_site_transient( $value, $transient ) {
-		$plugin = plugin_basename( $this->file );
+		$plugin = plugin_basename( $this->core->get_plugin_file() );
 
-		if ( ! is_object( $value ) || ! isset( $value->response ) || ! isset( $value->response[ plugin_basename( $this->file ) ] ) ) {
+		if ( ! is_object( $value ) || ! isset( $value->response ) || ! isset( $value->response[ plugin_basename( $this->core->get_plugin_file() ) ] ) ) {
 			return $value;
 		}
 
-		$plugin_info	= get_plugin_data( $this->file );
+		$plugin_info	= get_plugin_data( $this->core->get_plugin_file() );
 
 		if ( $value->response[ $plugin ]->slug === $this->core->get_slug() && $value->response[ $plugin ]->url !== $plugin_info['PluginURI'] ) {
 			unset( $value->response[$plugin] );
