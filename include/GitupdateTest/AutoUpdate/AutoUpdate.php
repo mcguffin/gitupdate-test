@@ -1,6 +1,15 @@
 <?php
-
+/**
+ *	@package GitupdateTest\AutoUpdate
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 namespace GitupdateTest\AutoUpdate;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
+
 
 use GitupdateTest\Core;
 
@@ -20,6 +29,7 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	@inheritdoc
 	 */
 	protected function __construct() {
+
 		$this->core = Core\Core::instance();
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_transient' ), 10, 3 );
@@ -35,16 +45,17 @@ abstract class AutoUpdate extends Core\Singleton {
 	 *	@filter site_transient_update_plugins
 	 */
 	public function check_site_transient( $value, $transient ) {
-		$plugin = plugin_basename( $this->core->get_plugin_file() );
 
-		if ( ! is_object( $value ) || ! isset( $value->response ) || ! isset( $value->response[ plugin_basename( $this->core->get_plugin_file() ) ] ) ) {
+		$plugin = $this->core->get_wp_plugin();
+
+		if ( ! is_object( $value ) || ! isset( $value->response ) || ! isset( $value->response[ $plugin ] ) ) {
 			return $value;
 		}
 
-		$plugin_info	= get_plugin_data( $this->core->get_plugin_file() );
+		$plugin_info	= $this->core->get_plugin_meta();
 
 		if ( $value->response[ $plugin ]->slug === $this->core->get_slug() && $value->response[ $plugin ]->url !== $plugin_info['PluginURI'] ) {
-			unset( $value->response[$plugin] );
+			unset( $value->response[ $plugin ] );
 		}
 		return $value;
 	}
@@ -54,9 +65,9 @@ abstract class AutoUpdate extends Core\Singleton {
 	 */
 	public function plugins_api( $res, $action, $args ) {
 
-		if ( $_REQUEST['plugin'] === $this->core->get_slug() ) {
+		if ( isset($_REQUEST['plugin']) && $_REQUEST['plugin'] === $this->core->get_slug() ) {
 
-			$plugin_info	= $this->core->get_plugin_meta();
+			$plugin_info	= get_plugin_data( $this->core->get_plugin_file() );
 			$release_info	= $this->get_release_info();
 
 			$plugin_api = array(

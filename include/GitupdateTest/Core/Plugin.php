@@ -1,6 +1,16 @@
 <?php
+/**
+ *	@package GitupdateTest\Core
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 
 namespace GitupdateTest\Core;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
+
 
 use GitupdateTest\PostType;
 use GitupdateTest\Compat;
@@ -18,7 +28,7 @@ class Plugin extends Singleton {
 	);
 
 	/**
-	 *	Private constructor
+	 *	@inheritdoc
 	 */
 	protected function __construct( $file ) {
 
@@ -28,53 +38,54 @@ class Plugin extends Singleton {
 		register_deactivation_hook( $this->get_plugin_file(), array( __CLASS__ , 'deactivate' ) );
 		register_uninstall_hook( $this->get_plugin_file(), array( __CLASS__ , 'uninstall' ) );
 
-		add_action( 'wp_upgrade', array( $this, 'maybe_upgrade' ) );
-
+		add_action( 'admin_init', array( $this, 'maybe_upgrade' ) );
+		add_filter( 'extra_plugin_headers', array( $this, 'add_plugin_header' ) );
 		parent::__construct();
+	}
+
+	/**
+	 *	@filter extra_plugin_headers
+	 */
+	public function add_plugin_header( $headers ) {
+		$headers['Github Repository'] = 'Github Repository';
+		return $headers;
 	}
 
 	/**
 	 *	@return string full plugin file path
 	 */
-	final public function get_plugin_file() {
+	public function get_plugin_file() {
 		return $this->plugin_file;
+	}
+
+	/**
+	 *	@return string full plugin file path
+	 */
+	public function get_plugin_dir() {
+		return plugin_dir_path( $this->get_plugin_file() );
 	}
 
 	/**
 	 *	@return string Path to the main plugin file from plugins directory
 	 */
-	final public function get_wp_plugin() {
-		return str_replace( trailingslashit( WP_PLUGIN_DIR ), '', $this->plugin_file );
+	public function get_wp_plugin() {
+		return plugin_basename( $this->plugin_file );
 	}
-
-	/**
-	 *	@return string full plugin file path
-	 */
-	final public function get_plugin_dir() {
- 		return plugin_dir_path( $this->get_plugin_file() );
- 	}
 
 	/**
 	 *	@return string current plugin version
 	 */
-	final public function get_version() {
+	public function get_version() {
 		return $this->get_plugin_meta( 'Version' );
-	}
-
-	/**
-	 *	@return string current plugin version
-	 */
-	final public function get_slug() {
-		return basename( $this->get_plugin_dir() );
 	}
 
 	/**
 	 *	@param string $which Which plugin meta to get. NUll
 	 *	@return string|array plugin meta
 	 */
-	final public function get_plugin_meta( $which = null ) {
+	public function get_plugin_meta( $which = null ) {
 		if ( ! isset( $this->plugin_meta ) ) {
-			$this->plugin_meta = get_plugin_data( $this->plugin_file() );
+			$this->plugin_meta = get_plugin_data( $this->get_plugin_file() );
 		}
 		if ( isset( $this->plugin_meta[ $which ] ) ) {
 			return $this->plugin_meta[ $which ];
@@ -87,8 +98,7 @@ class Plugin extends Singleton {
 	 */
 	public function maybe_upgrade() {
 		// trigger upgrade
-		$meta = get_plugin_data( GITUPDATE_TEST_FILE );
-		$new_version = $meta['Version'];
+		$new_version = $this->get_version();
 		$old_version = get_option( 'gitupdate_test_version' );
 
 		// call upgrade
@@ -107,10 +117,13 @@ class Plugin extends Singleton {
 	 */
 	public static function activate() {
 
+		update_site_option( '_version', $this->get_version() );
+
 		foreach ( self::$components as $component ) {
 			$comp = $component::instance();
 			$comp->activate();
 		}
+
 
 	}
 

@@ -1,6 +1,14 @@
 <?php
-
+/**
+ *	@package GitupdateTest\AutoUpdate
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 namespace GitupdateTest\AutoUpdate;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
 
 use GitupdateTest\Core;
 
@@ -119,10 +127,10 @@ class AutoUpdateGithub extends AutoUpdate {
 	private function get_github_repo() {
 		if ( is_null( $this->github_repo ) ) {
 			$this->github_repo = false;
-			$data = get_file_data( $this->core->get_plugin_file(), array('GithubRepo'=>'Github Repository') );
-			if ( ! empty( $data['GithubRepo'] ) ) {
-				$this->github_repo = $data['GithubRepo'];
+			if ( $repo = $this->core->get_plugin_meta( 'Github Repository' ) ) {
+				$this->github_repo = $repo;
 			}
+			vaR_dump($this->github_repo);exit();
 		}
 		return $this->github_repo;
 

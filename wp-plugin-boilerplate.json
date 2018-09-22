@@ -1,0 +1,14 @@
+{
+  "modules": {
+    "autoupdate": {},
+    "compat": {},
+    "git": {}
+  },
+  "plugin_author": "J\u00f6rn Lund",
+  "plugin_author_uri": "",
+  "plugin_name": "Gitupdate Test",
+  "plugin_namespace": "GitupdateTest",
+  "plugin_slug": "gitupdate_test",
+  "this_year": 2018,
+  "wp_plugin_slug": "gitupdate-test"
+}

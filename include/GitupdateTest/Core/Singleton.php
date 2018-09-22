@@ -1,6 +1,16 @@
 <?php
+/**
+ *	@package GitupdateTest\Core
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 
 namespace GitupdateTest\Core;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
+
 
 abstract class Singleton {
 
@@ -15,11 +25,14 @@ abstract class Singleton {
 	 * @return object single instance of Core
 	 */
 	public static function instance() {
+
 		$class = get_called_class();
+
 		if ( ! isset( self::$instances[ $class ] ) ) {
 			$args = func_get_args();
 			self::$instances[ $class ] = new $class( ...$args );
 		}
+
 		return self::$instances[ $class ];
 	}
 

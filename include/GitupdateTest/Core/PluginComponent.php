@@ -1,6 +1,16 @@
 <?php
+/**
+ *	@package GitupdateTest\Core
+ *	@version 1.0.0
+ *	2018-09-22
+ */
 
 namespace GitupdateTest\Core;
+
+if ( ! defined('ABSPATH') ) {
+	die('FU!');
+}
+
 
 abstract class PluginComponent extends Singleton {
 
