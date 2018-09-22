@@ -106,14 +106,14 @@ class Plugin extends Singleton {
 	public function maybe_upgrade() {
 		// trigger upgrade
 		$new_version = $this->get_version();
-		$old_version = get_option( 'gitupdate_test_version' );
+		$old_version = get_site_option( 'gitupdate_test_version' );
 
 		// call upgrade
 		if ( version_compare($new_version, $old_version, '>' ) ) {
 
 			$this->upgrade( $new_version, $old_version );
 
-			update_option( 'gitupdate_test_version', $new_version );
+			update_site_option( 'gitupdate_test_version', $new_version );
 
 		}
 
@@ -124,7 +124,7 @@ class Plugin extends Singleton {
 	 */
 	public static function activate() {
 
-		update_site_option( '_version', $this->get_version() );
+		update_site_option( 'gitupdate_test_version', self::instance()->get_version() );
 
 		foreach ( self::$components as $component ) {
 			$comp = $component::instance();
