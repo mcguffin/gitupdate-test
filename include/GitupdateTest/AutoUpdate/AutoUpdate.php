@@ -12,7 +12,7 @@ abstract class AutoUpdate extends Core\Singleton {
 	protected $release_info = null;
 
 	/**
-	 *	@var Core\Core plugin core instance
+	 *	@var GitupdateTest\Core\Core plugin core instance
 	 */
 	protected $core = null;
 

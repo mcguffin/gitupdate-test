@@ -4,15 +4,14 @@
  *	@version 1.0.0
  *	2018-09-22
  */
-
-namespace {{plugin_namespace}}\Compat;
+namespace GitupdateTest\Compat;
 
 if ( ! defined('ABSPATH') ) {
 	die('FU!');
 }
 
 
-use {{plugin_namespace}}\Core;
+use GitupdateTest\Core;
 
 
 class Polylang extends Core\PluginComponent {
