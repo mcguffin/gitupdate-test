@@ -37,7 +37,7 @@ class WPMU extends Core\PluginComponent {
 	 /**
 	  *	@inheritdoc
 	  */
-	 public function uninstall() {
+	 public static function uninstall() {
 		 // remove content and settings
 	 }
 

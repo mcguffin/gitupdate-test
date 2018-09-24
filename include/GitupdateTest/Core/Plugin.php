@@ -25,7 +25,6 @@ class Plugin extends PluginComponent {
 
 	/** @var string plugin components which might need upgrade */
 	private static $components = array(
-		'GitupdateTest\Core\Core',
 		'GitupdateTest\Compat\ACF',
 		'GitupdateTest\Compat\Polylang',
 		'GitupdateTest\Compat\WPMU',

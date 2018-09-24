@@ -5,7 +5,7 @@ Plugin Name: GitUpdate Test
 Plugin URI: https://github.com/mcguffin/gitupdate-test
 Description: Enter description here.
 Author: Jörn Lund
-Version: 1.2.13
+Version: 1.2.14
 Requires WP: 4.8
 Requires PHP: 5.6
 Author URI: https://github.com/mcguffin
