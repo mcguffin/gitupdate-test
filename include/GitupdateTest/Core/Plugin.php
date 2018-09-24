@@ -112,7 +112,7 @@ class Plugin extends PluginComponent {
 		$old_version = get_site_option( 'gitupdate_test_version' );
 
 		// call upgrade
-		if ( version_compare($new_version, $old_version, '>' ) ) {
+		if ( version_compare( $new_version, $old_version, '>' ) ) {
 
 			$this->upgrade( $new_version, $old_version );
 
@@ -127,7 +127,7 @@ class Plugin extends PluginComponent {
 	 */
 	public function activate() {
 
-		update_site_option( 'gitupdate_test_version', self::instance()->get_version() );
+		$this->maybe_upgrade();
 
 		foreach ( self::$components as $component ) {
 			$comp = $component::instance();
