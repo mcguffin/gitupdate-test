@@ -85,6 +85,4 @@ class Core extends Plugin {
 		return plugins_url( $asset, $this->plugin_file() );
 	}
 
-
-
 }

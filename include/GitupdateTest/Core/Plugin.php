@@ -15,7 +15,7 @@ if ( ! defined('ABSPATH') ) {
 use GitupdateTest\PostType;
 use GitupdateTest\Compat;
 
-class Plugin extends Singleton {
+class Plugin extends PluginComponent {
 
 	/** @var string plugin main file */
 	private $plugin_file;
@@ -25,6 +25,10 @@ class Plugin extends Singleton {
 
 	/** @var string plugin components which might need upgrade */
 	private static $components = array(
+		'GitupdateTest\Core\Core',
+		'GitupdateTest\Compat\ACF',
+		'GitupdateTest\Compat\Polylang',
+		'GitupdateTest\Compat\WPMU',
 	);
 
 	/**
@@ -122,7 +126,7 @@ class Plugin extends Singleton {
 	/**
 	 *	Fired on plugin activation
 	 */
-	public static function activate() {
+	public function activate() {
 
 		update_site_option( 'gitupdate_test_version', self::instance()->get_version() );
 
@@ -165,7 +169,7 @@ class Plugin extends Singleton {
 	/**
 	 *	Fired on plugin deactivation
 	 */
-	public static function deactivate() {
+	public function deactivate() {
 		foreach ( self::$components as $component ) {
 			$comp = $component::instance();
 			$comp->deactivate();

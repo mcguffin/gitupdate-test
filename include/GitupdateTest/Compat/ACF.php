@@ -16,6 +16,9 @@ use GitupdateTest\Core;
 
 class ACF extends Core\PluginComponent {
 
+	/**
+	 *	@inheritdoc
+	 */
 	protected function __construct() {
 	}
 
@@ -36,7 +39,7 @@ class ACF extends Core\PluginComponent {
 	 /**
 	  *	@inheritdoc
 	  */
-	 public function uninstall() {
+	 public static function uninstall() {
 		 // remove content and settings
 	 }
 
@@ -44,6 +47,7 @@ class ACF extends Core\PluginComponent {
  	 *	@inheritdoc
 	 */
 	public function upgrade( $new_version, $old_version ) {
+		error_log( "Upgrade {$old_version} > {$new_version}" );
 	}
 
 }
